@@ -1,119 +1,127 @@
 <!DOCTYPE html>
 <html lang="sl">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Rezervacija prostorov</title>
-  <style>
-    body { margin: 0; font-family: Arial, sans-serif; }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Rezervacija prostorov</title>
 
-    #app { display: none; height: 100vh; }
+<style>
+/* === OSNOVNI STIL === */
+body {
+  margin:0;
+  font-family:Arial;
+  background:#e6f2ff; /* svetlo modra */
+}
 
-    .container { display: flex; height: 100%; }
+.container {
+  display:flex;
+  height:100vh;
+}
 
-    .sidebar { width: 260px; background: #1f2937; color: white; padding: 20px; box-sizing: border-box; display: flex; flex-direction: column; justify-content: space-between; }
+/* === LEVI MENI === */
+.sidebar {
+  width:260px;
+  background:#1e3a5f;
+  color:white;
+  padding:20px;
+  display:flex;
+  flex-direction:column;
+  justify-content:space-between;
+}
 
-    .header-title {
-      font-size: 16px;
-      font-weight: bold;
-      margin-bottom: 15px;
-      text-align: center;
-    }
+.header-title {
+  text-align:center;
+  font-weight:bold;
+  margin-bottom:10px;
+}
 
-    .room { padding: 10px; margin: 8px 0; cursor: pointer; border-radius: 6px; font-weight: bold; }
-    .room:hover { opacity: 0.85; }
+.room {
+  padding:10px;
+  margin:6px 0;
+  border-radius:6px;
+  cursor:pointer;
+  font-weight:bold;
+}
 
-    .pdf-section { margin-top: 20px; padding-top: 15px; border-top: 1px solid #374151; }
-    .pdf-btn { display: block; text-align: center; padding: 12px; background: #111827; border: 2px dashed #9ca3af; border-radius: 8px; cursor: pointer; font-weight: bold; }
-    .pdf-btn:hover { background: #374151; }
+/* === DESNI DEL === */
+.main {
+  flex:1;
+  padding:20px;
+}
 
-    .main { flex: 1; padding: 20px; box-sizing: border-box; }
-    iframe { width: 100%; height: 75vh; border: none; }
+iframe {
+  width:100%;
+  height:75vh;
+  border:none;
+}
 
-    .booking { margin-top: 20px; }
-    .booking input, .booking textarea { width: 100%; padding: 8px; margin: 5px 0; }
-    .booking button { padding: 10px; background: #2563eb; color: white; border: none; cursor: pointer; }
+/* === GUMBI SPODAJ === */
+.pdf-btn {
+  padding:10px;
+  margin-top:10px;
+  border:2px dashed #ccc;
+  text-align:center;
+  cursor:pointer;
+}
 
-    .title { font-size: 22px; margin-bottom: 10px; font-weight: bold; }
-  </style>
+</style>
 </head>
+
 <body>
 
-<script>
-  const PASSWORD = "dekani";
-  const saved = localStorage.getItem("auth_ok");
+<div class="container">
 
-  function showApp() {
-    document.getElementById("app").style.display = "block";
-  }
+<!-- ================== LEVI MENI ================== -->
+<div class="sidebar">
 
-  if (saved === "true") {
-    showApp();
-  } else {
-    const pass = prompt("Vnesi geslo:");
-    if (pass === PASSWORD) {
-      localStorage.setItem("auth_ok", "true");
-      showApp();
-    } else {
-      document.body.innerHTML = "<h2 style='padding:20px'>Dostop zavrnjen</h2>";
-    }
-  }
+<div>
+<div class="header-title">KRAJEVNA SKUPNOST DEKANI</div>
 
-  function logout() {
-    localStorage.removeItem("auth_ok");
-    location.reload();
-  }
-</script>
+<!--
+TUKAJ VSTAVI SVOJE GOOGLE CALENDAR LINKE
+Format mora biti:
+'https://calendar.google.com/calendar/embed?src=...'
+-->
 
-<div id="app">
-  <div class="container">
+<div class="room" style="background:#3b82f6" onclick="setCal('LINK1')">VELIKA DVORANA</div>
+<div class="room" style="background:#10b981" onclick="setCal('LINK2')">MALA DVORANA</div>
+<div class="room" style="background:#f59e0b" onclick="setCal('LINK3')">STARA GARAŽA</div>
+<div class="room" style="background:#ef4444" onclick="setCal('LINK4')">DOPOLAVOR</div>
+<div class="room" style="background:#8b5cf6" onclick="setCal('LINK5')">KLOPI</div>
+<div class="room" style="background:#14b8a6" onclick="setCal('LINK6')">OSTALO</div>
 
-    <div class="sidebar">
-      <div>
-        <div class="header-title">KRAJEVNA SKUPNOST DEKANI</div>
-        <h2>Prostori</h2>
+</div>
 
-        <div class="room" style="background:#3b82f6" onclick="changeCalendar('https://calendar.google.com/calendar/embed?src=ABC123')">VELIKA DVORANA</div>
-        <div class="room" style="background:#10b981" onclick="changeCalendar('LINK2')">MALA DVORANA</div>
-        <div class="room" style="background:#f59e0b" onclick="changeCalendar('LINK3')">STARA GARAŽA</div>
-        <div class="room" style="background:#ef4444" onclick="changeCalendar('LINK4')">DOPOLAVOR</div>
-        <div class="room" style="background:#8b5cf6" onclick="changeCalendar('LINK5')">KLOPI</div>
-        <div class="room" style="background:#14b8a6" onclick="changeCalendar('LINK6')">OSTALO</div>
-      </div>
+<div>
+<!-- PDF mora biti v istem repoju kot index.html -->
+<div class="pdf-btn" onclick="openPDF()">📄 CENIK</div>
+</div>
 
-      <div class="pdf-section">
-        <div class="pdf-btn" onclick="openPDF()">📄 CENIK</div>
-        <div class="pdf-btn" style="margin-top:10px;border-style:solid" onclick="logout()">🔒 ODJAVA</div>
-      </div>
-    </div>
+</div>
 
-    <div class="main">
-      <div class="title">Razpoložljivost prostorov</div>
+<!-- ================== DESNI DEL ================== -->
+<div class="main">
+<h2>Razpoložljivost prostorov</h2>
 
-      <iframe id="calendarFrame" src="LINK1"></iframe>
+<!-- PRIVZETI KOLEDAR -->
+<iframe id="cal" src="https://calendar.google.com/calendar/embed?src=db35e4d29553c31dfb9a085abc46d98234f8f3a29017e076f4d1e2a4df323318%40group.calendar.google.com&ctz=Europe%2FBelgrade&mode=MONTH&showTitle=0&showTabs=0&showCalendars=0"></iframe>
 
-      <div class="booking">
-        <h3>Povpraševanje za rezervacijo</h3>
-        <form action="mailto:your@email.com" method="post" enctype="text/plain">
-          <input type="text" name="ime" placeholder="Ime" required>
-          <input type="email" name="email" placeholder="Email" required>
-          <textarea name="sporocilo" placeholder="Želeni termin in prostor" required></textarea>
-          <button type="submit">Pošlji</button>
-        </form>
-      </div>
-    </div>
+</div>
 
-  </div>
 </div>
 
 <script>
-  function changeCalendar(link) {
-    document.getElementById('calendarFrame').src = link;
-  }
 
-  function openPDF() {
-    window.open('cenik.pdf', '_blank');
-  }
+// FUNKCIJA ZA MENJAVO KOLEDARJA
+function setCal(link){
+  document.getElementById("cal").src = link;
+}
+
+// ODPRE PDF (cenik.pdf mora obstajati v repoju)
+function openPDF(){
+  window.open("cenik.pdf","_blank");
+}
+
 </script>
 
 </body>
