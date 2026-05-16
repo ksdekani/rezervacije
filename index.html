@@ -19,7 +19,7 @@ body{
  border-right:3px solid #93c5fd;
  box-shadow:2px 0 10px rgba(0,0,0,.2);
 }
-.sidebar h2{text-align:center;margin-top:0;}
+.sidebar h2{text-align:center;margin-top:0; font-size:20px;}
 .room{
  padding:12px;
  margin:10px 0;
@@ -31,7 +31,13 @@ body{
  transition:.2s;
 }
 .room:hover{transform:translateY(-2px);opacity:.9}
+.room.active{
+ outline:3px solid white;
+ box-shadow:0 0 0 3px rgba(255,255,255,.3),0 4px 15px rgba(0,0,0,.35);
+ transform:scale(1.03);
+}
 .main{flex:1;padding:25px}
+#calendarTitle{margin-top:0}
 iframe{
  width:100%;
  height:80vh;
@@ -46,47 +52,44 @@ iframe{
 <div class="container">
 
 <div class="sidebar">
-<h2>Prostori</h2>
+<h2>Razpoložljivost prostorov</h2>
 
-<!-- Temno modra -->
-<div class="room" style="background:#1e40af" onclick="setCal(VELIKA)">VELIKA DVORANA</div>
-
-<!-- Oranžna -->
-<div class="room" style="background:#f97316" onclick="setCal(GARAZA)">STARA GARAŽA</div>
-
-<!-- Zelena -->
-<div class="room" style="background:#22c55e" onclick="setCal(DOPOLAVOR)">DOPOLAVOR</div>
-
-<!-- Rumena -->
-<div class="room" style="background:#eab308;color:black" onclick="setCal(OSTALO)">OSTALO</div>
+<div class="room" style="background:#64748b">SKUPNI KOLEDAR</div>
+<div class="room" style="background:#1e40af">VELIKA DVORANA</div>
+<div class="room" style="background:#f97316">STARA GARAŽA</div>
+<div class="room" style="background:#22c55e">DOPOLAVOR</div>
+<div class="room" style="background:#eab308;color:black">OSTALO</div>
 
 </div>
 
 <div class="main">
-<h2>Razpoložljivost prostorov</h2>
-
-<!-- PRIVZETO SE ODPRE SKUPNI KOLEDAR -->
+<h2 id="calendarTitle">SKUPNI KOLEDAR</h2>
 <iframe id="cal"></iframe>
-
 </div>
 </div>
 
 <script>
-/* LINKI KOLEDARJEV */
 const VELIKA='https://calendar.google.com/calendar/embed?height=600&wkst=2&ctz=Europe%2FBelgrade&showPrint=0&showTz=0&showCalendars=0&showTabs=0&title=VELIKA%20DVORANA&src=ZGIzNWU0ZDI5NTUzYzMxZGZiOWEwODVhYmM0NmQ5ODIzNGY4ZjNhMjkwMTdlMDc2ZjRkMWUyYTRkZjMyMzMxOEBncm91cC5jYWxlbmRhci5nb29nbGUuY29t&src=c2wuc2xvdmVuaWFuI2hvbGlkYXlAZ3JvdXAudi5jYWxlbmRhci5nb29nbGUuY29t&color=%237986cb&color=%230b8043';
-
 const GARAZA='https://calendar.google.com/calendar/embed?height=600&wkst=2&ctz=Europe%2FBelgrade&showPrint=0&title=STARA%20GARA%C5%BDA&showTabs=0&showCalendars=0&showTz=0&src=OTM5MTQyODMzNzdhMDEwMzhhM2I0NTFiMWU3NzFiMWViYzQyNTkwYjM0NjYxY2RmNTA2ZTlmNzAxYjI3MDY3MkBncm91cC5jYWxlbmRhci5nb29nbGUuY29t&src=c2wuc2xvdmVuaWFuI2hvbGlkYXlAZ3JvdXAudi5jYWxlbmRhci5nb29nbGUuY29t&color=%23f09300&color=%230b8043';
-
 const DOPOLAVOR='https://calendar.google.com/calendar/embed?height=600&wkst=2&ctz=Europe%2FBelgrade&showPrint=0&title=DOPOLAVOR&showTabs=0&showCalendars=0&showTz=0&src=MTI0MGU5MDlmMmUzMGM3YzI0ZTE1MjlkYWRhZDM2NjVmNjZlYWM4ODlhMGUxMDFjNjU2ZTk2YzVjYmE4NWJiYkBncm91cC5jYWxlbmRhci5nb29nbGUuY29t&src=c2wuc2xvdmVuaWFuI2hvbGlkYXlAZ3JvdXAudi5jYWxlbmRhci5nb29nbGUuY29t&color=%23d81b60&color=%230b8043';
-
 const OSTALO='https://calendar.google.com/calendar/embed?height=600&wkst=2&ctz=Europe%2FBelgrade&showPrint=0&title=OSTALO&showTabs=0&showCalendars=0&showTz=0&src=NTFlM2UzZDA5YmM2ZDQ0NWI2YTA4ZDI2YTk0ZjNmMWM5MWM1MWUxNjRiMzRjYmU5NWJkNzA4YzQwYWRmMmQzNkBncm91cC5jYWxlbmRhci5nb29nbGUuY29t&src=c2wuc2xvdmVuaWFuI2hvbGlkYXlAZ3JvdXAudi5jYWxlbmRhci5nb29nbGUuY29t&color=%23c0ca33&color=%230b8043';
-
 const SKUPNI='https://calendar.google.com/calendar/embed?height=600&wkst=2&ctz=Europe%2FBelgrade&showPrint=0&title=SKUPNI&showTabs=0&showTz=0&src=MTI0MGU5MDlmMmUzMGM3YzI0ZTE1MjlkYWRhZDM2NjVmNjZlYWM4ODlhMGUxMDFjNjU2ZTk2YzVjYmE4NWJiYkBncm91cC5jYWxlbmRhci5nb29nbGUuY29t&src=NTFlM2UzZDA5YmM2ZDQ0NWI2YTA4ZDI2YTk0ZjNmMWM5MWM1MWUxNjRiMzRjYmU5NWJkNzA4YzQwYWRmMmQzNkBncm91cC5jYWxlbmRhci5nb29nbGUuY29t&src=OTM5MTQyODMzNzdhMDEwMzhhM2I0NTFiMWU3NzFiMWViYzQyNTkwYjM0NjYxY2RmNTA2ZTlmNzAxYjI3MDY3MkBncm91cC5jYWxlbmRhci5nb29nbGUuY29t&src=ZGIzNWU0ZDI5NTUzYzMxZGZiOWEwODVhYmM0NmQ5ODIzNGY4ZjNhMjkwMTdlMDc2ZjRkMWUyYTRkZjMyMzMxOEBncm91cC5jYWxlbmRhci5nb29nbGUuY29t&src=c2wuc2xvdmVuaWFuI2hvbGlkYXlAZ3JvdXAudi5jYWxlbmRhci5nb29nbGUuY29t&color=%23d81b60&color=%23c0ca33&color=%23f09300&color=%237986cb&color=%230b8043';
 
-function setCal(link){document.getElementById('cal').src=link;}
+function setCal(link,title,button){
+ document.getElementById('cal').src=link;
+ document.getElementById('calendarTitle').innerText=title;
+ document.querySelectorAll('.room').forEach(btn=>btn.classList.remove('active'));
+ button.classList.add('active');
+}
 
-/* Privzeto naloži skupni koledar */
-setCal(SKUPNI);
+const buttons=document.querySelectorAll('.room');
+buttons[0].onclick=(e)=>setCal(SKUPNI,'SKUPNI KOLEDAR',e.currentTarget);
+buttons[1].onclick=(e)=>setCal(VELIKA,'VELIKA DVORANA',e.currentTarget);
+buttons[2].onclick=(e)=>setCal(GARAZA,'STARA GARAŽA',e.currentTarget);
+buttons[3].onclick=(e)=>setCal(DOPOLAVOR,'DOPOLAVOR',e.currentTarget);
+buttons[4].onclick=(e)=>setCal(OSTALO,'OSTALO',e.currentTarget);
+
+setCal(SKUPNI,'SKUPNI KOLEDAR',buttons[0]);
 </script>
 </body>
 </html>
